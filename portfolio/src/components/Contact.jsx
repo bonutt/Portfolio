@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Github, Linkedin, Phone, Send, MapPin } from 'lucide-react'
+import emailjs from '@emailjs/browser'
 
 const CONTACTS = [
   { icon: Phone, label: 'Telefone', value: '(11) 98447-9450', href: 'tel:+5511984479450' },
@@ -12,15 +13,26 @@ const CONTACTS = [
 export default function Contact() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState('idle') // idle | sending | sent | error
   const [form, setForm] = useState({ name: '', email: '', message: '' })
 
-  const handleSubmit = () => {
-    // Placeholder: integre com EmailJS ou Formspree para envio real
+  const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) return
-    setSent(true)
-    setTimeout(() => setSent(false), 4000)
-    setForm({ name: '', email: '', message: '' })
+    setStatus('sending')
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        { from_name: form.name, from_email: form.email, message: form.message, to_name: 'Luigi' },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      )
+      setStatus('sent')
+      setForm({ name: '', email: '', message: '' })
+      setTimeout(() => setStatus('idle'), 4000)
+    } catch {
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 4000)
+    }
   }
 
   return (
@@ -133,14 +145,20 @@ export default function Contact() {
 
             <button
               onClick={handleSubmit}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]"
-              style={{ background: sent ? '#16a34a' : 'linear-gradient(135deg,#ea580c,#f97316)' }}
+              disabled={status === 'sending'}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+              style={{
+                background:
+                  status === 'sent' ? '#16a34a' :
+                  status === 'error' ? '#dc2626' :
+                  'linear-gradient(135deg,#ea580c,#f97316)',
+              }}
             >
-              {sent ? '✓ Mensagem enviada!' : (<><Send size={16} /> Enviar Mensagem</>)}
+              {status === 'sending' && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
+              {status === 'sent' && '✓ Mensagem enviada!'}
+              {status === 'error' && '✕ Erro ao enviar. Tente novamente.'}
+              {status === 'idle' && <><Send size={16} /> Enviar Mensagem</>}
             </button>
-            <p className="text-white/25 text-xs text-center font-mono">
-              * Configure EmailJS ou Formspree para envio real
-            </p>
           </motion.div>
         </div>
       </div>

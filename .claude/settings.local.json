@@ -19,7 +19,8 @@
       "Bash(file *)",
       "Bash(git checkout *)",
       "Bash(git commit *)",
-      "Bash(git branch *)"
+      "Bash(git branch *)",
+      "Bash(npm install *)"
     ]
   }
 }
