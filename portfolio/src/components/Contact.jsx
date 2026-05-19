@@ -3,6 +3,8 @@ import { motion, useInView } from 'framer-motion'
 import { Github, Linkedin, Phone, Send, MapPin } from 'lucide-react'
 import emailjs from '@emailjs/browser'
 
+emailjs.init({ publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY })
+
 const CONTACTS = [
   { icon: Phone, label: 'Telefone', value: '(11) 98447-9450', href: 'tel:+5511984479450' },
   { icon: Github, label: 'GitHub', value: 'github.com/bonutt', href: 'https://github.com/bonutt' },
@@ -24,12 +26,12 @@ export default function Contact() {
         import.meta.env.VITE_EMAILJS_SERVICE_ID,
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
         { from_name: form.name, from_email: form.email, message: form.message, to_name: 'Luigi' },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       )
       setStatus('sent')
       setForm({ name: '', email: '', message: '' })
       setTimeout(() => setStatus('idle'), 4000)
-    } catch {
+    } catch (err) {
+      console.error('EmailJS error:', err)
       setStatus('error')
       setTimeout(() => setStatus('idle'), 4000)
     }
