@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #f97316 #0a0a0a;
+  }
+  html::-webkit-scrollbar { width: 4px; }
+  html::-webkit-scrollbar-track { background: #0a0a0a; }
+  html::-webkit-scrollbar-thumb { background: #f97316; border-radius: 2px; }
+
+  body {
+    background-color: #0a0a0a;
+    color: #ffffff;
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: #f9731655; color: #fff; }
+}
+
+@layer components {
+  .glass {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(249,115,22,0.12);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+  }
+  .glass:hover {
+    background: rgba(249,115,22,0.06);
+    border-color: rgba(249,115,22,0.3);
+  }
+
+  .neon-text {
+    color: #f97316;
+    text-shadow: 0 0 20px #f9731699, 0 0 40px #f9731644;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #fb923c, #f97316, #ea580c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .section-padding { padding: 6rem 0; }
+
+  .container-custom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .skill-tag {
+    @apply px-3 py-1 text-sm font-mono rounded-full;
+    background: rgba(249,115,22,0.08);
+    border: 1px solid rgba(249,115,22,0.25);
+    color: #fb923c;
+    transition: all 0.3s ease;
+  }
+  .skill-tag:hover {
+    background: rgba(249,115,22,0.2);
+    border-color: rgba(249,115,22,0.5);
+    box-shadow: 0 0 15px rgba(249,115,22,0.3);
+  }
+
+  .glitch { position: relative; }
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .glitch::before {
+    color: #f97316;
+    animation: glitch-1 4s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  }
+  .glitch::after {
+    color: #fb923c;
+    animation: glitch-2 4s infinite;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  }
+
+  @keyframes glitch-1 {
+    0%, 88%, 100% { transform: translateX(0); opacity: 0; }
+    90% { transform: translateX(-4px); opacity: 0.8; }
+    92% { transform: translateX(4px); opacity: 0.4; }
+    94% { transform: translateX(-2px); opacity: 0.6; }
+    96% { transform: translateX(0); opacity: 0; }
+  }
+  @keyframes glitch-2 {
+    0%, 88%, 100% { transform: translateX(0); opacity: 0; }
+    91% { transform: translateX(4px); opacity: 0.8; }
+    93% { transform: translateX(-4px); opacity: 0.4; }
+    95% { transform: translateX(2px); opacity: 0.6; }
+    97% { transform: translateX(0); opacity: 0; }
+  }
+
+  .typing-cursor::after {
+    content: '|';
+    color: #f97316;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+}
+
+.noise {
+  position: fixed;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.028;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+#particles-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9996;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(249,115,22,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249,115,22,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.scanlines {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px
+  );
+  pointer-events: none;
+  z-index: 9997;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-18px); }
+}
