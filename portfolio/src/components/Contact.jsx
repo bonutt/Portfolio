@@ -1,9 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Github, Linkedin, Phone, Send, MapPin } from 'lucide-react'
-import emailjs from '@emailjs/browser'
-
-emailjs.init({ publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY })
 
 const CONTACTS = [
   { icon: Phone, label: 'Telefone', value: '(11) 98447-9450', href: 'tel:+5511984479450' },
@@ -22,16 +19,27 @@ export default function Contact() {
     if (!form.name || !form.email || !form.message) return
     setStatus('sending')
     try {
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        { from_name: form.name, from_email: form.email, message: form.message, to_name: 'Luigi' },
-      )
-      setStatus('sent')
-      setForm({ name: '', email: '', message: '' })
-      setTimeout(() => setStatus('idle'), 4000)
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: '3d5b75cd-bf9e-44b9-8c0c-e215ad112c19',
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          subject: `Novo contato do portfólio — ${form.name}`,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setStatus('sent')
+        setForm({ name: '', email: '', message: '' })
+        setTimeout(() => setStatus('idle'), 4000)
+      } else {
+        throw new Error(data.message)
+      }
     } catch (err) {
-      console.error('EmailJS error:', err)
+      console.error('Web3Forms error:', err)
       setStatus('error')
       setTimeout(() => setStatus('idle'), 4000)
     }
